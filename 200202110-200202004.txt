@@ -1,0 +1,2119 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Customer
+{
+    public partial class CustomerCreateDeleteWalletForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        int walletId = 0;
+        int currencyId = 0;
+        bool didAddCurrencyNameRow = false;
+
+        public CustomerCreateDeleteWalletForm()
+        {
+            InitializeComponent();
+        }
+
+        private void UpdateDataGridView()
+        {
+            if (didAddCurrencyNameRow)
+            {
+                walletListDataGridView.Columns.RemoveAt(7);
+            }
+            var query =
+                from wallet in bank.WalletLists
+                where wallet.user_id == Supporting_Files.Variables.userID
+                select wallet;
+
+            walletListDataGridView.DataSource = query;
+            walletListDataGridView.Columns[0].Visible = false;
+            walletListDataGridView.Columns[1].Visible = false;
+            walletListDataGridView.Columns[2].Visible = false;
+            walletListDataGridView.Columns[3].HeaderText = "Amount";
+            walletListDataGridView.Columns[4].Visible = false;
+            walletListDataGridView.Columns[5].Visible = false;
+            walletListDataGridView.Columns[6].Visible = false;
+            walletListDataGridView.Columns[7].Visible = false;
+
+            walletListDataGridView.Columns.Add("currencyName", "Currency Name");
+            didAddCurrencyNameRow = true;
+
+            int rowCount = 0;
+            foreach (var wallet in query)
+            {
+                var temp =
+                    from currency in bank.CurrencyLists
+                    where wallet.currency_id == currency.currency_id
+                    select currency;
+                walletListDataGridView.Rows[rowCount].Cells["currencyName"].Value = temp.First().currency_name;
+                rowCount += 1;
+            }
+        }
+
+        private void CreateDeleteForm_Load(object sender, EventArgs e)
+        {
+            UpdateDataGridView();
+        }
+
+        private void walletListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string tempWalletId = walletListDataGridView.CurrentRow.Cells[0].Value.ToString();
+            walletId = int.Parse(tempWalletId);
+
+            string tempCurrencyId = walletListDataGridView.CurrentRow.Cells[2].Value.ToString();
+            currencyId = int.Parse(tempCurrencyId);
+
+            var tempCurrency =
+                from currency in bank.CurrencyLists
+                where currency.currency_id == currencyId
+                select currency;
+
+            currencyNameTextBox.Text = tempCurrency.First().currency_name;
+            currencyShortNameTextBox.Text = tempCurrency.First().currency_shortname;
+            exchangeRateTextBox.Text = tempCurrency.First().exchange_rate.ToString();
+            amountTextBox.Text = walletListDataGridView.CurrentRow.Cells[3].Value.ToString();
+        }
+
+        private void addWalletButton_Click(object sender, EventArgs e)
+        {
+            var newWalletCurrency =
+                from currency in bank.CurrencyLists
+                where currency.currency_shortname == currencyShortNameTextBox.Text
+                select currency;
+            if (newWalletCurrency != null && newWalletCurrency.Count() > 0)
+            {
+                SQL.WalletList newWallet = new SQL.WalletList();
+                newWallet.user_id = Supporting_Files.Variables.userID;
+                newWallet.currency_id = newWalletCurrency.First().currency_id;
+                newWallet.wallet_weight = 0;
+                bank.WalletLists.InsertOnSubmit(newWallet);
+                bank.SubmitChanges();
+                var lastWallet = bank.WalletLists.OrderByDescending(x => x.wallet_id).FirstOrDefault(x => x.user_id == Supporting_Files.Variables.userID);
+                SQL.ProcessList newProcess = new SQL.ProcessList();
+                newProcess.process_type = 4;
+                newProcess.sending_wallet = lastWallet.wallet_id;
+                newProcess.amount = 0;
+                newProcess.process_owner = Supporting_Files.Variables.userID;
+                newProcess.is_approved = false;
+                newProcess.process_date = Supporting_Files.Variables.currentDate;
+                bank.ProcessLists.InsertOnSubmit(newProcess);
+                bank.SubmitChanges();
+                UpdateDataGridView();
+            }
+
+            else
+            {
+                MessageBox.Show("Currency not recognized.");
+            }
+        }
+
+        private void deleteCurrencyButton_Click(object sender, EventArgs e)
+        {
+            if (Convert.ToDecimal(amountTextBox.Text) == 0)
+            {
+                SQL.ProcessList newProcess = new SQL.ProcessList();
+                newProcess.process_type = 5;
+                newProcess.sending_wallet = walletId;
+                newProcess.amount = 0;
+                newProcess.process_owner = Supporting_Files.Variables.userID;
+                newProcess.is_approved = false;
+                newProcess.process_date = Supporting_Files.Variables.currentDate;
+                bank.ProcessLists.InsertOnSubmit(newProcess);
+                bank.SubmitChanges();
+                UpdateDataGridView();
+            }
+
+            else
+            {
+                MessageBox.Show("Wallet cannot be deleted.");
+            }
+        }
+
+        private void BackButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new CustomerMainForm();
+            form.Show();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Customer
+{
+    public partial class CustomerCreateDeleteWalletForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        int walletId = 0;
+        int currencyId = 0;
+        bool didAddCurrencyNameRow = false;
+
+        public CustomerCreateDeleteWalletForm()
+        {
+            InitializeComponent();
+        }
+
+        private void UpdateDataGridView()
+        {
+            if (didAddCurrencyNameRow)
+            {
+                walletListDataGridView.Columns.RemoveAt(7);
+            }
+            var query =
+                from wallet in bank.WalletLists
+                where wallet.user_id == Supporting_Files.Variables.userID
+                select wallet;
+
+            walletListDataGridView.DataSource = query;
+            walletListDataGridView.Columns[0].Visible = false;
+            walletListDataGridView.Columns[1].Visible = false;
+            walletListDataGridView.Columns[2].Visible = false;
+            walletListDataGridView.Columns[3].HeaderText = "Amount";
+            walletListDataGridView.Columns[4].Visible = false;
+            walletListDataGridView.Columns[5].Visible = false;
+            walletListDataGridView.Columns[6].Visible = false;
+            walletListDataGridView.Columns[7].Visible = false;
+
+            walletListDataGridView.Columns.Add("currencyName", "Currency Name");
+            didAddCurrencyNameRow = true;
+
+            int rowCount = 0;
+            foreach (var wallet in query)
+            {
+                var temp =
+                    from currency in bank.CurrencyLists
+                    where wallet.currency_id == currency.currency_id
+                    select currency;
+                walletListDataGridView.Rows[rowCount].Cells["currencyName"].Value = temp.First().currency_name;
+                rowCount += 1;
+            }
+        }
+
+        private void CreateDeleteForm_Load(object sender, EventArgs e)
+        {
+            UpdateDataGridView();
+        }
+
+        private void walletListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string tempWalletId = walletListDataGridView.CurrentRow.Cells[0].Value.ToString();
+            walletId = int.Parse(tempWalletId);
+
+            string tempCurrencyId = walletListDataGridView.CurrentRow.Cells[2].Value.ToString();
+            currencyId = int.Parse(tempCurrencyId);
+
+            var tempCurrency =
+                from currency in bank.CurrencyLists
+                where currency.currency_id == currencyId
+                select currency;
+
+            currencyNameTextBox.Text = tempCurrency.First().currency_name;
+            currencyShortNameTextBox.Text = tempCurrency.First().currency_shortname;
+            exchangeRateTextBox.Text = tempCurrency.First().exchange_rate.ToString();
+            amountTextBox.Text = walletListDataGridView.CurrentRow.Cells[3].Value.ToString();
+        }
+
+        private void addWalletButton_Click(object sender, EventArgs e)
+        {
+            var newWalletCurrency =
+                from currency in bank.CurrencyLists
+                where currency.currency_shortname == currencyShortNameTextBox.Text
+                select currency;
+            if (newWalletCurrency != null && newWalletCurrency.Count() > 0)
+            {
+                SQL.WalletList newWallet = new SQL.WalletList();
+                newWallet.user_id = Supporting_Files.Variables.userID;
+                newWallet.currency_id = newWalletCurrency.First().currency_id;
+                newWallet.wallet_weight = 0;
+                bank.WalletLists.InsertOnSubmit(newWallet);
+                bank.SubmitChanges();
+                var lastWallet = bank.WalletLists.OrderByDescending(x => x.wallet_id).FirstOrDefault(x => x.user_id == Supporting_Files.Variables.userID);
+                SQL.ProcessList newProcess = new SQL.ProcessList();
+                newProcess.process_type = 4;
+                newProcess.sending_wallet = lastWallet.wallet_id;
+                newProcess.amount = 0;
+                newProcess.process_owner = Supporting_Files.Variables.userID;
+                newProcess.is_approved = false;
+                newProcess.process_date = Supporting_Files.Variables.currentDate;
+                bank.ProcessLists.InsertOnSubmit(newProcess);
+                bank.SubmitChanges();
+                UpdateDataGridView();
+            }
+
+            else
+            {
+                MessageBox.Show("Currency not recognized.");
+            }
+        }
+
+        private void deleteCurrencyButton_Click(object sender, EventArgs e)
+        {
+            if (Convert.ToDecimal(amountTextBox.Text) == 0)
+            {
+                SQL.ProcessList newProcess = new SQL.ProcessList();
+                newProcess.process_type = 5;
+                newProcess.sending_wallet = walletId;
+                newProcess.amount = 0;
+                newProcess.process_owner = Supporting_Files.Variables.userID;
+                newProcess.is_approved = false;
+                newProcess.process_date = Supporting_Files.Variables.currentDate;
+                bank.ProcessLists.InsertOnSubmit(newProcess);
+                bank.SubmitChanges();
+                UpdateDataGridView();
+            }
+
+            else
+            {
+                MessageBox.Show("Wallet cannot be deleted.");
+            }
+        }
+
+        private void BackButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new CustomerMainForm();
+            form.Show();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Customer
+{
+    public partial class CustomerCreateDeleteWalletForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        int walletId = 0;
+        int currencyId = 0;
+        bool didAddCurrencyNameRow = false;
+
+        public CustomerCreateDeleteWalletForm()
+        {
+            InitializeComponent();
+        }
+
+        private void UpdateDataGridView()
+        {
+            if (didAddCurrencyNameRow)
+            {
+                walletListDataGridView.Columns.RemoveAt(7);
+            }
+            var query =
+                from wallet in bank.WalletLists
+                where wallet.user_id == Supporting_Files.Variables.userID
+                select wallet;
+
+            walletListDataGridView.DataSource = query;
+            walletListDataGridView.Columns[0].Visible = false;
+            walletListDataGridView.Columns[1].Visible = false;
+            walletListDataGridView.Columns[2].Visible = false;
+            walletListDataGridView.Columns[3].HeaderText = "Amount";
+            walletListDataGridView.Columns[4].Visible = false;
+            walletListDataGridView.Columns[5].Visible = false;
+            walletListDataGridView.Columns[6].Visible = false;
+            walletListDataGridView.Columns[7].Visible = false;
+
+            walletListDataGridView.Columns.Add("currencyName", "Currency Name");
+            didAddCurrencyNameRow = true;
+
+            int rowCount = 0;
+            foreach (var wallet in query)
+            {
+                var temp =
+                    from currency in bank.CurrencyLists
+                    where wallet.currency_id == currency.currency_id
+                    select currency;
+                walletListDataGridView.Rows[rowCount].Cells["currencyName"].Value = temp.First().currency_name;
+                rowCount += 1;
+            }
+        }
+
+        private void CreateDeleteForm_Load(object sender, EventArgs e)
+        {
+            UpdateDataGridView();
+        }
+
+        private void walletListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string tempWalletId = walletListDataGridView.CurrentRow.Cells[0].Value.ToString();
+            walletId = int.Parse(tempWalletId);
+
+            string tempCurrencyId = walletListDataGridView.CurrentRow.Cells[2].Value.ToString();
+            currencyId = int.Parse(tempCurrencyId);
+
+            var tempCurrency =
+                from currency in bank.CurrencyLists
+                where currency.currency_id == currencyId
+                select currency;
+
+            currencyNameTextBox.Text = tempCurrency.First().currency_name;
+            currencyShortNameTextBox.Text = tempCurrency.First().currency_shortname;
+            exchangeRateTextBox.Text = tempCurrency.First().exchange_rate.ToString();
+            amountTextBox.Text = walletListDataGridView.CurrentRow.Cells[3].Value.ToString();
+        }
+
+        private void addWalletButton_Click(object sender, EventArgs e)
+        {
+            var newWalletCurrency =
+                from currency in bank.CurrencyLists
+                where currency.currency_shortname == currencyShortNameTextBox.Text
+                select currency;
+            if (newWalletCurrency != null && newWalletCurrency.Count() > 0)
+            {
+                SQL.WalletList newWallet = new SQL.WalletList();
+                newWallet.user_id = Supporting_Files.Variables.userID;
+                newWallet.currency_id = newWalletCurrency.First().currency_id;
+                newWallet.wallet_weight = 0;
+                bank.WalletLists.InsertOnSubmit(newWallet);
+                bank.SubmitChanges();
+                var lastWallet = bank.WalletLists.OrderByDescending(x => x.wallet_id).FirstOrDefault(x => x.user_id == Supporting_Files.Variables.userID);
+                SQL.ProcessList newProcess = new SQL.ProcessList();
+                newProcess.process_type = 4;
+                newProcess.sending_wallet = lastWallet.wallet_id;
+                newProcess.amount = 0;
+                newProcess.process_owner = Supporting_Files.Variables.userID;
+                newProcess.is_approved = false;
+                newProcess.process_date = Supporting_Files.Variables.currentDate;
+                bank.ProcessLists.InsertOnSubmit(newProcess);
+                bank.SubmitChanges();
+                UpdateDataGridView();
+            }
+
+            else
+            {
+                MessageBox.Show("Currency not recognized.");
+            }
+        }
+
+        private void deleteCurrencyButton_Click(object sender, EventArgs e)
+        {
+            if (Convert.ToDecimal(amountTextBox.Text) == 0)
+            {
+                SQL.ProcessList newProcess = new SQL.ProcessList();
+                newProcess.process_type = 5;
+                newProcess.sending_wallet = walletId;
+                newProcess.amount = 0;
+                newProcess.process_owner = Supporting_Files.Variables.userID;
+                newProcess.is_approved = false;
+                newProcess.process_date = Supporting_Files.Variables.currentDate;
+                bank.ProcessLists.InsertOnSubmit(newProcess);
+                bank.SubmitChanges();
+                UpdateDataGridView();
+            }
+
+            else
+            {
+                MessageBox.Show("Wallet cannot be deleted.");
+            }
+        }
+
+        private void BackButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new CustomerMainForm();
+            form.Show();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3
+{
+    public partial class CustomerMainForm : Form
+    {
+        public CustomerMainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void UpdateContactInfoButton_Click(object sender, EventArgs e)
+        {
+            Form form = new View.Customer.CustomerUpdateContactInfoForm();
+            form.Show();
+        }
+
+        private void CreateDeleteWalletButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new View.Customer.CustomerCreateDeleteWalletForm();
+            form.Show();
+        }
+
+        private void DepositWithdrawMoneyButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new View.Customer.CustomerDepositWithdrawMoneyForm();
+            form.Show();
+        }
+
+        private void transferMoneyButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new View.Customer.CustomerTransferMoneyForm();
+            form.Show();
+        }
+
+        private void logutButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Supporting_Files.Variables.userID = -1;
+            Supporting_Files.Variables.representerID = -1;
+            Form form = new LoginForm();
+            form.Show();
+        }
+
+        private void ShowFinancialStatusButton_Click(object sender, EventArgs e)
+        {
+            Form form = new View.Customer.CustomerShowFinancialStatusForm();
+            form.Show();
+        }
+
+        private void requestLoanButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new View.Customer.CustomerLoanListForm();
+            form.Show();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Customer
+{
+    public partial class CustomerPayLoanForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        int selectedInstallmentID = 0;
+
+        decimal payAmount = 0;
+
+        public CustomerPayLoanForm()
+        {
+            InitializeComponent();
+        }
+
+        private void CustomerPayLoanForm_Load(object sender, EventArgs e)
+        {
+            var walletList =
+                from wallet in bank.WalletLists
+                where wallet.user_id == Supporting_Files.Variables.userID
+                select wallet;
+
+            WalletListDataGridView.DataSource = walletList;
+
+            var loanList =
+                from loan in bank.LoanInstallmentLists
+                where loan.loan_id == Supporting_Files.Variables.selectedLoanID
+                select loan;
+
+            LoanListDataGridView.DataSource = loanList;
+        }
+
+        private void WalletListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Supporting_Files.Variables.selectedWalletID = Convert.ToInt32(WalletListDataGridView.CurrentRow.Cells[0].Value);
+
+            WalletIDTextBox.Text = Supporting_Files.Variables.selectedWalletID.ToString();
+        }
+
+        private void LoanListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            selectedInstallmentID = Convert.ToInt32(LoanListDataGridView.CurrentRow.Cells[0].Value);
+
+            InstallmentIDTextBox.Text = selectedInstallmentID.ToString();
+
+            var tempLoanList =
+                from loan in bank.LoanLists
+                where loan.loan_id == Supporting_Files.Variables.selectedLoanID
+                select loan;
+
+            decimal interestRate = 0;
+
+            if (Convert.ToDateTime(LoanListDataGridView.CurrentRow.Cells[2].Value) > Supporting_Files.Variables.currentDate)
+            {
+                interestRate = 1;
+            } 
+            
+            else if (Convert.ToDateTime(LoanListDataGridView.CurrentRow.Cells[2].Value) > Supporting_Files.Variables.currentDate)
+            {
+                interestRate = tempLoanList.FirstOrDefault().interest_rate;
+            }
+
+            else
+            {
+                interestRate = tempLoanList.FirstOrDefault().delayed_interest_rate;
+            }
+
+            payAmount = Convert.ToDecimal(LoanListDataGridView.CurrentRow.Cells[0].Value) * interestRate;
+
+            AmountTextBox.Text = payAmount.ToString();
+
+        }
+
+        private void PayLoanButton_Click(object sender, EventArgs e)
+        {
+            if (Supporting_Files.Variables.selectedLoanID > 0 && selectedInstallmentID > 0 && payAmount > 0)
+            {
+                SQL.ProcessList newProcess = new SQL.ProcessList();
+                newProcess.process_type = 7;
+                newProcess.amount = payAmount;
+                newProcess.process_owner = Supporting_Files.Variables.userID;
+                newProcess.sending_wallet = Supporting_Files.Variables.selectedWalletID;
+                newProcess.target_wallet = selectedInstallmentID;
+                newProcess.is_approved = true;
+                newProcess.process_date = Supporting_Files.Variables.currentDate;
+                bank.ProcessLists.InsertOnSubmit(newProcess);
+                bank.SubmitChanges();
+            }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Customer
+{
+    public partial class CustomerPayLoanForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        int selectedInstallmentID = 0;
+
+        decimal payAmount = 0;
+
+        public CustomerPayLoanForm()
+        {
+            InitializeComponent();
+        }
+
+        private void CustomerPayLoanForm_Load(object sender, EventArgs e)
+        {
+            var walletList =
+                from wallet in bank.WalletLists
+                where wallet.user_id == Supporting_Files.Variables.userID
+                select wallet;
+
+            WalletListDataGridView.DataSource = walletList;
+
+            var loanList =
+                from loan in bank.LoanInstallmentLists
+                where loan.loan_id == Supporting_Files.Variables.selectedLoanID
+                select loan;
+
+            LoanListDataGridView.DataSource = loanList;
+        }
+
+        private void WalletListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Supporting_Files.Variables.selectedWalletID = Convert.ToInt32(WalletListDataGridView.CurrentRow.Cells[0].Value);
+
+            WalletIDTextBox.Text = Supporting_Files.Variables.selectedWalletID.ToString();
+        }
+
+        private void LoanListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            selectedInstallmentID = Convert.ToInt32(LoanListDataGridView.CurrentRow.Cells[0].Value);
+
+            InstallmentIDTextBox.Text = selectedInstallmentID.ToString();
+
+            var tempLoanList =
+                from loan in bank.LoanLists
+                where loan.loan_id == Supporting_Files.Variables.selectedLoanID
+                select loan;
+
+            decimal interestRate = 0;
+
+            if (Convert.ToDateTime(LoanListDataGridView.CurrentRow.Cells[2].Value) > Supporting_Files.Variables.currentDate)
+            {
+                interestRate = 1;
+            } 
+            
+            else if (Convert.ToDateTime(LoanListDataGridView.CurrentRow.Cells[2].Value) > Supporting_Files.Variables.currentDate)
+            {
+                interestRate = tempLoanList.FirstOrDefault().interest_rate;
+            }
+
+            else
+            {
+                interestRate = tempLoanList.FirstOrDefault().delayed_interest_rate;
+            }
+
+            payAmount = Convert.ToDecimal(LoanListDataGridView.CurrentRow.Cells[0].Value) * interestRate;
+
+            AmountTextBox.Text = payAmount.ToString();
+
+        }
+
+        private void PayLoanButton_Click(object sender, EventArgs e)
+        {
+            if (Supporting_Files.Variables.selectedLoanID > 0 && selectedInstallmentID > 0 && payAmount > 0)
+            {
+                SQL.ProcessList newProcess = new SQL.ProcessList();
+                newProcess.process_type = 7;
+                newProcess.amount = payAmount;
+                newProcess.process_owner = Supporting_Files.Variables.userID;
+                newProcess.sending_wallet = Supporting_Files.Variables.selectedWalletID;
+                newProcess.target_wallet = selectedInstallmentID;
+                newProcess.is_approved = true;
+                newProcess.process_date = Supporting_Files.Variables.currentDate;
+                bank.ProcessLists.InsertOnSubmit(newProcess);
+                bank.SubmitChanges();
+            }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Customer
+{
+    public partial class CustomerTransferMoneyForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        int walletID = 0;
+        int currencyID = 0;
+        decimal maxTransferAmount = 0;
+        bool didAddCurrencyNameRow = false;
+
+        public CustomerTransferMoneyForm()
+        {
+            InitializeComponent();
+        }
+        private void UpdateDataGridView()
+        {
+            if (didAddCurrencyNameRow)
+            {
+                walletListDataGridView.Columns.RemoveAt(7);
+            }
+            var query =
+                from wallet in bank.WalletLists
+                where wallet.user_id == Supporting_Files.Variables.userID
+                select wallet;
+
+            walletListDataGridView.DataSource = query;
+            walletListDataGridView.Columns[0].Visible = false;
+            walletListDataGridView.Columns[1].Visible = false;
+            walletListDataGridView.Columns[2].Visible = false;
+            walletListDataGridView.Columns[3].HeaderText = "Amount";
+            walletListDataGridView.Columns[4].Visible = false;
+            walletListDataGridView.Columns[5].Visible = false;
+            walletListDataGridView.Columns[6].Visible = false;
+            walletListDataGridView.Columns[7].Visible = false;
+
+            walletListDataGridView.Columns.Add("currencyName", "Currency Name");
+            didAddCurrencyNameRow = true;
+
+            int rowCount = 0;
+            foreach (var wallet in query)
+            {
+                var temp =
+                    from currency in bank.CurrencyLists
+                    where wallet.currency_id == currency.currency_id
+                    select currency;
+                walletListDataGridView.Rows[rowCount].Cells["currencyName"].Value = temp.First().currency_name;
+                rowCount += 1;
+            }
+        }
+
+        private void CustomerTransferMoneyForm_Load(object sender, EventArgs e)
+        {
+            UpdateDataGridView();
+        }
+
+        private void walletListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string tempWalletId = walletListDataGridView.CurrentRow.Cells[0].Value.ToString();
+            walletID = int.Parse(tempWalletId);
+
+            string tempAmount = walletListDataGridView.CurrentRow.Cells[3].Value.ToString();
+            maxTransferAmount = Convert.ToDecimal(tempAmount);
+
+            string tempCurrencyId = walletListDataGridView.CurrentRow.Cells[2].Value.ToString();
+            currencyID = int.Parse(tempCurrencyId);
+
+            var tempCurrency =
+                from currency in bank.CurrencyLists
+                where currency.currency_id == currencyID
+                select currency;
+
+            currencyNameTextBox.Text = tempCurrency.FirstOrDefault().currency_name;
+            currencyShortNameTextBox.Text = tempCurrency.FirstOrDefault().currency_shortname;
+            exchangeRateTextBox.Text = tempCurrency.FirstOrDefault().exchange_rate.ToString();
+            amountTextBox.Text = 0.ToString();
+        }
+
+        private void transferMoneyButton_Click(object sender, EventArgs e)
+        {
+            if (walletID != 0)
+            {
+                if (maxTransferAmount >= Convert.ToDecimal(amountTextBox.Text))
+                {
+                    var sendingWallet =
+                        from wallet in bank.WalletLists
+                        where wallet.wallet_id == walletID
+                        select wallet;
+
+                    bool acceptsTransactions = sendingWallet.FirstOrDefault().accepts_transactions ?? true;
+
+                    SQL.ProcessList newProcess = new SQL.ProcessList();
+                    newProcess.process_type = 3;
+                    newProcess.sending_wallet = sendingWallet.FirstOrDefault().wallet_id;
+                    newProcess.target_wallet = Convert.ToInt32(targetWalletIDTextBox.Text);
+                    newProcess.amount = Convert.ToDecimal(amountTextBox.Text);
+                    newProcess.is_approved = true;
+                    newProcess.is_deadlock = !(acceptsTransactions);
+                    newProcess.process_owner = Supporting_Files.Variables.userID;
+                    newProcess.process_date = Supporting_Files.Variables.currentDate;
+                    bank.ProcessLists.InsertOnSubmit(newProcess);
+
+                    var targetWallet =
+                        from wallet in bank.WalletLists
+                        where wallet.wallet_id == Convert.ToInt32(targetWalletIDTextBox.Text)
+                        select wallet;
+
+                    foreach (var wallet in targetWallet)
+                    {
+                        wallet.accepts_transactions = false;
+                    }
+
+                    try
+                    {
+                        bank.SubmitChanges();
+                    }
+
+                    catch
+                    {
+                        MessageBox.Show("Something went wrong.");
+                    }
+                }
+
+                else
+                {
+                    MessageBox.Show("Please enter a proper amount.");
+                }
+            }
+
+            else
+            {
+                MessageBox.Show("Please select sending wallet.");
+            }
+        }
+
+        private void goBackButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new CustomerMainForm();
+            form.Show();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Customer
+{
+    public partial class CustomerUpdateContactInfoForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        public CustomerUpdateContactInfoForm()
+        {
+            InitializeComponent();
+
+            var initialQuery =
+                from contactInfo in bank.ContactInfoLists
+                where contactInfo.user_id == Supporting_Files.Variables.userID
+                select contactInfo;
+
+            SQL.ContactInfoList temp = initialQuery.First();
+            addressTextBox.Text = temp.adress;
+            phoneTextBox.Text = temp.phone;
+        }
+
+        private void updateContactInfoButton_Click(object sender, EventArgs e)
+        {
+            var updateQuery =
+                from contactInfo in bank.ContactInfoLists
+                where contactInfo.user_id == Supporting_Files.Variables.userID
+                select contactInfo;
+
+            foreach (var contactInfo in updateQuery)
+            {
+                contactInfo.adress = addressTextBox.Text;
+                contactInfo.phone = phoneTextBox.Text;
+            }
+
+            bank.SubmitChanges();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Customer_Representer
+{
+    public partial class CustomerRepresenterCustomerProcessesForm : Form
+    {
+        int selectedProcessID = 0;
+
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        public CustomerRepresenterCustomerProcessesForm()
+        {
+            InitializeComponent();
+        }
+
+        private void CustomerRepresenterCustomerProcessesForm_Load(object sender, EventArgs e)
+        {
+            UpdateDataGridView();
+        }
+
+        private void UpdateDataGridView()
+        {
+            var walletInitialQuery = 
+                from wallet in bank.WalletLists
+                where wallet.user_id == Supporting_Files.Variables.userID
+                select wallet;
+
+            WalletListDataGridView.DataSource = walletInitialQuery;
+
+            WalletListDataGridView.Columns[0].HeaderText = "Wallet ID";
+            WalletListDataGridView.Columns[1].HeaderText = "Owner ID";
+            WalletListDataGridView.Columns[2].HeaderText = "Currency ID";
+            WalletListDataGridView.Columns[3].HeaderText = "Balance";
+            WalletListDataGridView.Columns[5].HeaderText = "Active";
+            WalletListDataGridView.Columns[5].HeaderText = "Approved";
+
+            WalletListDataGridView.Columns[4].Visible = false;
+            WalletListDataGridView.Columns[6].Visible = false;
+            WalletListDataGridView.Columns[7].Visible = false;
+
+            var processInitialQuery =
+                from process in bank.ProcessLists
+                where process.process_owner == Supporting_Files.Variables.userID
+                select process;
+
+            ProcessListDataGridView.DataSource = processInitialQuery;
+
+            ProcessListDataGridView.Columns[0].HeaderText = "Process ID";
+            ProcessListDataGridView.Columns[1].HeaderText = "Process Type";
+            ProcessListDataGridView.Columns[2].HeaderText = "Sender";
+            ProcessListDataGridView.Columns[3].HeaderText = "Target";
+            ProcessListDataGridView.Columns[4].HeaderText = "Balance";
+            ProcessListDataGridView.Columns[5].HeaderText = "Approved";
+            ProcessListDataGridView.Columns[7].HeaderText = "Owner ID";
+
+            ProcessListDataGridView.Columns[6].Visible = false;
+            ProcessListDataGridView.Columns[8].Visible = false;
+            ProcessListDataGridView.Columns[9].Visible = false;
+            ProcessListDataGridView.Columns[10].Visible = false;
+            ProcessListDataGridView.Columns[11].Visible = false;
+            ProcessListDataGridView.Columns[12].Visible = false;
+        }
+
+        private void ProcessListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            selectedProcessID = Convert.ToInt32(ProcessListDataGridView.CurrentRow.Cells[0].Value);
+            SelectedProcessTextBox.Text = selectedProcessID.ToString();
+        }
+
+        private void BackButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new CustomerRepresenterMainForm();
+            form.Show();
+        }
+
+        private void ApproveProcessButton_Click(object sender, EventArgs e)
+        {
+            if (selectedProcessID != 0)
+            {
+                var updateQuery = 
+                    from process in bank.ProcessLists
+                    where process.process_id == selectedProcessID
+                    select process;
+
+                foreach(var process in updateQuery)
+                {
+                    process.is_approved = true;
+                }
+
+                bank.SubmitChanges();
+            }
+
+            else
+            {
+                MessageBox.Show("Please select a process from the list.");
+            }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3
+{
+    public partial class CustomerRepresenterMainForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        public CustomerRepresenterMainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void UpdateDataGridView()
+        {
+            var customerList =
+                from customer in bank.CustomerSharingLists
+                where customer.representer_id == Supporting_Files.Variables.representerID
+                select customer;
+
+            int rowCount = 0;
+
+            foreach (var customer in customerList)
+            {
+                var userList =
+                    from user in bank.UserLists
+                    where user.user_id == customer.customer_id
+                    select user;
+
+                customerListDataGridView.Rows.Add();
+
+                customerListDataGridView.Rows[rowCount].Cells["user_id"].Value = userList.FirstOrDefault().user_id.ToString();
+                customerListDataGridView.Rows[rowCount].Cells["username"].Value = userList.FirstOrDefault().username;
+                customerListDataGridView.Rows[rowCount].Cells["password"].Value = userList.FirstOrDefault().password;
+                rowCount ++;
+            }
+        }
+        
+        private void CustomerRepresenterMainForm_Load(object sender, EventArgs e)
+        {
+            UpdateDataGridView();
+        }
+
+        private void customerListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Supporting_Files.Variables.userID = Convert.ToInt32(customerListDataGridView.CurrentRow.Cells[0].Value);
+            SelectedCustomerTextBox.Text = Supporting_Files.Variables.userID.ToString();
+        }
+
+        private void CustomerProcessButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new View.Customer_Representer.CustomerRepresenterCustomerProcessesForm();
+            form.Show();
+        }
+
+        private void AddCustomerButton_Click(object sender, EventArgs e)
+        {
+            Form form = new View.Manager.ManagerAddCustomerForm();
+            form.Show();
+        }
+
+        private void UpdateCustomerButton_Click(object sender, EventArgs e)
+        {
+            if (Supporting_Files.Variables.userID > 0)
+            {
+                Form form = new View.Customer_Representer.CustomerRepresenterUpdateUserForm();
+                form.Show();
+            }
+            
+            else
+            {
+                MessageBox.Show("Please select a user from the list.");
+            }
+        }
+
+        private void DeleteCustomerButton_Click(object sender, EventArgs e)
+        {
+            if (Supporting_Files.Variables.userID > 0)
+            {
+                var infoDeleteQuery =
+                    from info in bank.ContactInfoLists
+                    where info.user_id == Supporting_Files.Variables.userID
+                    select info;
+
+                foreach (var info in infoDeleteQuery)
+                {
+                    bank.ContactInfoLists.DeleteOnSubmit(info);
+                }
+
+                var processDeleteQuery =
+                    from process in bank.ProcessLists
+                    where process.process_owner == Supporting_Files.Variables.userID
+                    select process;
+
+                foreach (var process in processDeleteQuery)
+                {
+                    bank.ProcessLists.DeleteOnSubmit(process);
+                }
+
+                var walletDeleteQuery =
+                    from wallet in bank.WalletLists
+                    where wallet.user_id == Supporting_Files.Variables.userID
+                    select wallet;
+
+                foreach (var wallet in walletDeleteQuery)
+                {
+                    bank.WalletLists.DeleteOnSubmit(wallet);
+                }
+
+                var userDeleteQuery =
+                    from user in bank.UserLists
+                    where user.user_id == Supporting_Files.Variables.userID
+                    select user;
+
+                foreach (var user in userDeleteQuery)
+                {
+                    bank.UserLists.DeleteOnSubmit(user);
+                }
+
+                var sharingDeleteQuery =
+                    from user in bank.CustomerSharingLists
+                    where user.customer_id == Supporting_Files.Variables.userID
+                    select user;
+
+                foreach (var user in sharingDeleteQuery)
+                {
+                    bank.CustomerSharingLists.DeleteOnSubmit(user);
+                }
+
+                try
+                {
+                    bank.SubmitChanges();
+                }
+
+                catch 
+                {
+                    MessageBox.Show("Error deleting user.");
+                }
+                UpdateDataGridView();
+            }
+
+            else
+            {
+                MessageBox.Show("Please select a user from the list.");
+            }
+        }
+
+        private void LogoutButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Supporting_Files.Variables.userID = -1;
+            Supporting_Files.Variables.representerID = -1;
+            Form form = new LoginForm();
+            form.Show();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Customer_Representer
+{
+    public partial class CustomerRepresenterUpdateUserForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        public CustomerRepresenterUpdateUserForm()
+        {
+            InitializeComponent();
+        }
+
+        private void CustomerRepresenterUpdateUserForm_Load(object sender, EventArgs e)
+        {
+            var userList =
+                from user in bank.UserLists
+                where user.user_id == Supporting_Files.Variables.userID
+                select user;
+
+            var contactInfoList =
+                from info in bank.ContactInfoLists
+                where info.user_id == Supporting_Files.Variables.userID
+                select info;
+
+            UsernameTextBox.Text = userList.FirstOrDefault().username;
+            PasswordTextBox.Text = userList.FirstOrDefault().password;
+            AddressTextBox.Text = contactInfoList.FirstOrDefault().adress;
+            PhoneNumberTextBox.Text = contactInfoList.FirstOrDefault().phone;
+        }
+
+        private void UpdateCustomerButton_Click(object sender, EventArgs e)
+        {
+            var userUpdateQuery =
+                from user in bank.UserLists
+                where user.user_id == Supporting_Files.Variables.userID
+                select user;
+
+            foreach (var user in userUpdateQuery)
+            {
+                user.username = UsernameTextBox.Text;
+                user.password = PasswordTextBox.Text;
+            }
+
+            var contactInfoUpdateQuery =
+                from info in bank.ContactInfoLists
+                where info.user_id == Supporting_Files.Variables.userID
+                select info;
+
+            foreach (var contactInfo in contactInfoUpdateQuery)
+            {
+                contactInfo.adress = AddressTextBox.Text;
+                contactInfo.phone = PhoneNumberTextBox.Text;
+            }
+
+            try
+            {
+                bank.SubmitChanges();
+                MessageBox.Show("User info updated successfully.");
+            }
+
+            catch
+            {
+                MessageBox.Show("Error updating user info.");
+            }
+        }
+    }
+}
+using System;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3
+{
+    public partial class LoginForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        public LoginForm()
+        {
+            InitializeComponent();
+        }
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LoginButton_Click(object sender, EventArgs e)
+        {
+            if (usernameTextBox.Text != null && usernameTextBox.Text.Length > 0)
+            {
+                if (passwordTextBox.Text != null && passwordTextBox.Text.Length > 0)
+                {
+                    var userId =
+                        from user in bank.UserLists
+                        where user.username == usernameTextBox.Text
+                        select user.user_id;
+
+                    if (userId.Count() > 0)
+                    {
+                        var password =
+                            from user in bank.UserLists
+                            where user.user_id == userId.FirstOrDefault()
+                            select user.password;
+
+                        if (password.Count() > 0)
+                        {
+                            if (password.FirstOrDefault() == passwordTextBox.Text)
+                            {
+                                var userType =
+                                    from user in bank.UserLists
+                                    where user.user_id == userId.FirstOrDefault()
+                                    select user.user_type;
+
+                                var dateList = 
+                                    from date in bank.Dates
+                                    select date;
+
+                                Supporting_Files.Variables.currentDate = Convert.ToDateTime(dateList.OrderByDescending(date => date.id).FirstOrDefault().currentDate.ToString());
+
+                                switch (userType.First())
+                                {
+                                    case 2:
+                                        this.Hide();
+                                        ManagerMainForm managerMainForm = new ManagerMainForm();
+                                        managerMainForm.Show();
+                                        return;
+                                    case 3:
+                                        Supporting_Files.Variables.representerID = userId.FirstOrDefault();
+                                        this.Hide();
+                                        CustomerRepresenterMainForm customerRepresenterMainForm = new CustomerRepresenterMainForm();
+                                        customerRepresenterMainForm.Show();
+                                        return;
+                                    case 4:
+                                        Supporting_Files.Variables.userID = userId.FirstOrDefault();
+                                        this.Hide();
+                                        CustomerMainForm customerMainForm = new CustomerMainForm();
+                                        customerMainForm.Show();
+                                        return;
+                                    default:
+                                        MessageBox.Show("UserType out of range. UserType: " + userType.FirstOrDefault());
+                                        break;
+                                }
+                            }
+
+                            else
+                            {
+                                MessageBox.Show("Username or password is wrong.");
+                            }
+                        }
+
+                        else
+                        {
+                            MessageBox.Show("Username or password is wrong.");
+                        }
+                    }
+
+                    else
+                    {
+                        MessageBox.Show("Username or password is wrong.");
+                    }
+
+                }
+
+                else
+                {
+                    MessageBox.Show("Password is empty.");
+                }
+            }
+
+            else
+            {
+                MessageBox.Show("Username is empty.");
+            }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Manager
+{
+    public partial class ManagerAddCustomerForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        int lastRepresenterID = 0;
+        int lastRepresentersCustomerCount = 999;
+
+        public ManagerAddCustomerForm()
+        {
+            InitializeComponent();
+        }
+
+        private void AddCustomerButton_Click(object sender, EventArgs e)
+        {
+            if (UsernameTextBox.Text.Length != 0 && PasswordTextBox.Text.Length != 0)
+            {
+                SQL.UserList newUser = new SQL.UserList();
+                newUser.username = UsernameTextBox.Text;
+                newUser.password = PasswordTextBox.Text;
+                newUser.user_type = 4;
+                bank.UserLists.InsertOnSubmit(newUser);
+
+                try
+                {
+                    bank.SubmitChanges();
+                } 
+
+                catch
+                {
+                    MessageBox.Show("Error adding customer to database.");
+                }
+                
+
+                var lastUser = bank.UserLists.OrderByDescending(user => user.user_id).FirstOrDefault();
+
+                SQL.ContactInfoList newUserContactInfo = new SQL.ContactInfoList();
+                newUserContactInfo.user_id = lastUser.user_id;
+                newUserContactInfo.adress = AddressTextBox.Text;
+                newUserContactInfo.phone = PhoneNumberTextBox.Text;
+                bank.ContactInfoLists.InsertOnSubmit(newUserContactInfo);
+
+                try
+                {
+                    bank.SubmitChanges();
+                }
+
+                catch
+                {
+                    MessageBox.Show("Error adding customer contact info to database.");
+                }
+
+                var representerList = 
+                    from representer in bank.UserLists
+                    where representer.user_type == 3
+                    select representer;
+
+                foreach (var representer in representerList)
+                {
+                    var representersCustomers =
+                        from customer in bank.CustomerSharingLists
+                        where customer.representer_id == representer.user_id
+                        select customer;
+
+                    if (representersCustomers.Count() <= lastRepresentersCustomerCount)
+                    {
+                        lastRepresentersCustomerCount = representersCustomers.Count();
+                        lastRepresenterID = representer.user_id;
+                    }
+                }
+
+                SQL.CustomerSharingList customerSharingList = new SQL.CustomerSharingList();
+                customerSharingList.representer_id = lastRepresenterID;
+                customerSharingList.customer_id = lastUser.user_id;
+                bank.CustomerSharingLists.InsertOnSubmit(customerSharingList);
+
+                try
+                {
+                    bank.SubmitChanges();
+                }
+
+                catch
+                {
+                    MessageBox.Show("Error adding customer sharing list to database.");
+                }
+
+                MessageBox.Show("Customer added successfully.");
+            }
+
+            else
+            {
+                MessageBox.Show("Username or password is empty.");
+            }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Manager
+{
+    public partial class ManagerEditCurrenciesForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        int currencyId = 0;
+
+        public ManagerEditCurrenciesForm()
+        {
+            InitializeComponent();
+        }
+
+        private void UpdateDataGridView()
+        {
+            var query = 
+                from currency in bank.CurrencyLists
+                select currency;
+
+            currencyListDataGridView.DataSource = query;
+            currencyListDataGridView.Columns[0].Visible = false;
+            currencyListDataGridView.Columns[1].HeaderText = "Currency Name";
+            currencyListDataGridView.Columns[2].HeaderText = "Currency's Short Name";
+            currencyListDataGridView.Columns[3].HeaderText = "Exchange Rate";
+        }
+
+        private void EditCurrenciesForm_Load(object sender, EventArgs e)
+        {
+            UpdateDataGridView();
+        }
+
+        private void updateCurrencyButton_Click(object sender, EventArgs e)
+        {
+            var updateQuery = 
+                from currency in bank.CurrencyLists
+                where currency.currency_id == currencyId
+                select currency;
+
+            foreach (var currency in updateQuery)
+            {
+                currency.currency_name = currencyNameTextBox.Text;
+                currency.currency_shortname = currencyShortNameTextBox.Text;
+                currency.exchange_rate = float.Parse(exchangeRateTextBox.Text);
+            }
+
+            bank.SubmitChanges();
+            UpdateDataGridView();
+        }
+
+        private void addCurrencyButton_Click(object sender, EventArgs e)
+        {
+            SQL.CurrencyList newCurrency = new SQL.CurrencyList();
+            newCurrency.currency_name = currencyNameTextBox.Text;
+            newCurrency.currency_shortname = currencyShortNameTextBox.Text;
+            newCurrency.exchange_rate = float.Parse(exchangeRateTextBox.Text);
+            bank.CurrencyLists.InsertOnSubmit(newCurrency);
+            bank.SubmitChanges();
+            UpdateDataGridView();
+        }
+
+        private void currencyListDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string temp = currencyListDataGridView.CurrentRow.Cells[0].Value.ToString();
+            currencyId = int.Parse(temp);
+            currencyNameTextBox.Text = currencyListDataGridView.CurrentRow.Cells[1].Value.ToString();
+            currencyShortNameTextBox.Text = currencyListDataGridView.CurrentRow.Cells[2].Value.ToString();
+            exchangeRateTextBox.Text = currencyListDataGridView.CurrentRow.Cells[3].Value.ToString();
+        }
+
+        private void goBackButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new ManagerMainForm();
+            form.Show();
+        }
+
+        private void deleteCurrencyButton_Click(object sender, EventArgs e)
+        {
+            var deleteQuery =
+                from currency in bank.CurrencyLists
+                where currency.currency_id == currencyId
+                select currency;
+
+            foreach (var currency in deleteQuery)
+            {
+                bank.CurrencyLists.DeleteOnSubmit(currency);
+            }
+
+            bank.SubmitChanges();
+            UpdateDataGridView();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Manager
+{
+    public partial class ManagerEmployeeSalariesForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        public ManagerEmployeeSalariesForm()
+        {
+            InitializeComponent();
+        }
+
+        private void SetSalariesButton_Click(object sender, EventArgs e)
+        {
+            if (SalariesTextBox.Text.Length > 0)
+            {
+                var salariesList =
+                    from salary in bank.SalariesLists
+                    select salary;
+
+                foreach (var salary in salariesList)
+                {
+                    salary.salary = Convert.ToDecimal(SalariesTextBox.Text);
+                }
+
+                bank.SubmitChanges();
+            }
+        }
+
+        private void EmployeeSalariesForm_Load(object sender, EventArgs e)
+        {
+            var salariesList =
+                from salary in bank.SalariesLists
+                select salary;
+
+            SalariesTextBox.Text = salariesList.FirstOrDefault().salary.ToString();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Manager
+{
+    public partial class ManagerFinancialStatusForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        decimal income = 0;
+        decimal outcome = 0;
+        decimal profit = 0;
+        decimal totalBalance = 0;
+
+        public ManagerFinancialStatusForm()
+        {
+            InitializeComponent();
+        }
+
+        private void ManagerFinancialStatusForm_Load(object sender, EventArgs e)
+        {
+            var walletList =
+                from wallet in bank.WalletLists
+                where wallet.wallet_id == 29
+                select wallet;
+
+            totalBalance = walletList.FirstOrDefault().wallet_weight;
+            TotalBalanceTextBox.Text = totalBalance.ToString();
+
+            var sendingProcessList = 
+                from process in bank.ProcessLists
+                where process.sending_wallet == 29 && process.process_date == Supporting_Files.Variables.currentDate
+                select process;
+
+            foreach(var sendingProcess in sendingProcessList)
+            {
+                outcome += sendingProcess.amount;
+            }
+
+            var targetProcessList =
+                from process in bank.ProcessLists
+                where process.target_wallet == 29
+                select process;
+
+            foreach (var targetProcess in targetProcessList)
+            {
+                income += targetProcess.amount;
+            }
+
+            profit = income - outcome;
+
+            IncomeTextBox.Text = income.ToString();
+            OutcomeTextBox.Text = outcome.ToString();
+            ProfitTextBox.Text = profit.ToString();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3
+{
+    public partial class ManagerMainForm : Form
+    {
+        public ManagerMainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void showFinancialStatusButton_Click(object sender, EventArgs e)
+        {
+            Form form = new View.Manager.ManagerFinancialStatusForm();
+            form.Show();
+        }
+
+        private void editCurrenciesButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Form form = new View.Manager.ManagerEditCurrenciesForm();
+            form.Show();
+        }
+
+        private void setCreditInterestRatesButton_Click(object sender, EventArgs e)
+        {
+            Form form = new View.Manager.ManagerSetCreditInterestRatesForm();
+            form.Show();
+        }
+
+        private void addCustomerButton_Click(object sender, EventArgs e)
+        {
+            Form form = new View.Manager.ManagerAddCustomerForm();
+            form.Show();
+        }
+
+        private void advanceSystemButton_Click(object sender, EventArgs e)
+        {
+            SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+            var processList =
+                from process in bank.ProcessLists
+                orderby process.process_id
+                select process;
+
+            foreach (var process in processList)
+            {
+                if (process.process_date == Supporting_Files.Variables.currentDate)
+                {
+                    switch (process.process_type)
+                    {
+                        case 1:
+                            var walletDepositQuery =
+                                from wallet in bank.WalletLists
+                                where wallet.wallet_id == process.target_wallet
+                                select wallet;
+
+                            foreach (var wallet in walletDepositQuery)
+                            {
+                                wallet.wallet_weight += process.amount;
+                            }
+
+                            bank.SubmitChanges();
+
+                            break;
+
+                        case 2:
+                            var walletWithdrawQuery =
+                                from wallet in bank.WalletLists
+                                where wallet.wallet_id == process.sending_wallet
+                                select wallet;
+
+                            foreach (var wallet in walletWithdrawQuery)
+                            {
+                                wallet.wallet_weight -= process.amount;
+                            }
+
+                            bank.SubmitChanges();
+
+                            break;
+
+                        case 3:
+                            if (!process.is_deadlock ?? false)
+                            {
+                                var walletSendingTransferQuery =
+                                from wallet in bank.WalletLists
+                                where wallet.wallet_id == process.sending_wallet
+                                select wallet;
+
+                                foreach (var wallet in walletSendingTransferQuery)
+                                {
+                                    var currencyList =
+                                        from currency in bank.CurrencyLists
+                                        where currency.currency_id == wallet.currency_id
+                                        select currency;
+
+                                    wallet.wallet_weight -= process.amount * Convert.ToDecimal(currencyList.FirstOrDefault().exchange_rate);
+                                }
+
+                                var walletTargetTransferQuery =
+                                    from wallet in bank.WalletLists
+                                    where wallet.wallet_id == process.target_wallet
+                                    select wallet;
+
+                                foreach (var wallet in walletTargetTransferQuery)
+                                {
+                                    var currencyList =
+                                        from currency in bank.CurrencyLists
+                                        where currency.currency_id == wallet.currency_id
+                                        select currency;
+
+                                    wallet.wallet_weight += process.amount / Convert.ToDecimal(currencyList.FirstOrDefault().exchange_rate);
+                                    wallet.accepts_transactions = false;
+                                }
+
+                                bank.SubmitChanges();
+                            }
+
+                            break;
+
+                        case 4:
+                            var walletCreateQuery =
+                                from wallet in bank.WalletLists
+                                where wallet.wallet_id == process.sending_wallet
+                                select wallet;
+
+                            foreach (var wallet in walletCreateQuery)
+                            {
+                                if (process.is_approved ?? false)
+                                {
+                                    wallet.is_active = true;
+                                }
+
+                                else
+                                {
+                                    bank.WalletLists.DeleteOnSubmit(wallet);
+                                }
+                            }
+
+                            bank.SubmitChanges();
+
+                            break;
+
+                        case 5:
+                            var walletDeleteQuery =
+                                from wallet in bank.WalletLists
+                                where wallet.wallet_id == process.sending_wallet
+                                select wallet;
+
+                            foreach (var wallet in walletDeleteQuery)
+                            {
+                                var processDeleteQuery =
+                                    from deletedProcess in bank.ProcessLists
+                                    where deletedProcess.sending_wallet == wallet.wallet_id || deletedProcess.target_wallet == wallet.wallet_id
+                                    select deletedProcess;
+
+                                foreach (var temp in processDeleteQuery)
+                                {
+                                    bank.ProcessLists.DeleteOnSubmit(temp);
+                                }
+
+                                bank.WalletLists.DeleteOnSubmit(wallet);
+                            }
+
+                            bank.SubmitChanges();
+
+                            break;
+
+                        case 6:
+                            var requestLoanSendingTransferQuery =
+                            from wallet in bank.WalletLists
+                            where wallet.wallet_id == 29
+                            select wallet;
+
+                            foreach (var wallet in requestLoanSendingTransferQuery)
+                            {
+                                wallet.wallet_weight -= process.amount;
+                            }
+
+                            SQL.WalletList newWallet = new SQL.WalletList();
+                            newWallet.user_id = process.process_owner ?? 29;
+                            newWallet.currency_id = 20;
+                            newWallet.wallet_weight = process.amount;
+                            newWallet.accepts_transactions = true;
+                            newWallet.is_active = true;
+                            bank.WalletLists.InsertOnSubmit(newWallet);
+
+                            var interestList =
+                                from interest in bank.InterestRates
+                                select interest;
+
+                            SQL.LoanList newLoan = new SQL.LoanList();
+                            newLoan.user_id = process.process_owner ?? 29;
+                            newLoan.amount = process.amount;
+                            newLoan.interest_rate = interestList.FirstOrDefault().default_interest_rate;
+                            newLoan.delayed_interest_rate = interestList.FirstOrDefault().delayed_interest_rate;
+                            newLoan.months_to_pay = Supporting_Files.Variables.monthsToPay;
+                            bank.LoanLists.InsertOnSubmit(newLoan);
+
+                            bank.SubmitChanges();
+
+                            var loanList =
+                                from loan in bank.LoanLists
+                                select loan;
+
+                            DateTime lastPayday = Supporting_Files.Variables.currentDate;
+
+                            for (int i = 0; i == newLoan.months_to_pay; i++)
+                            {
+                                SQL.LoanInstallmentList newLoanInstallment = new SQL.LoanInstallmentList();
+                                newLoanInstallment.loan_id = loanList.OrderByDescending(loan => loan.loan_id).FirstOrDefault().loan_id;
+                                newLoanInstallment.amount = loanList.OrderByDescending(loan => loan.loan_id).FirstOrDefault().amount;
+                                lastPayday = lastPayday.AddMonths(1);
+                                newLoanInstallment.payday = lastPayday;
+                                bank.LoanInstallmentLists.InsertOnSubmit(newLoanInstallment);
+                                bank.SubmitChanges();
+                            }
+
+                            break;
+
+                        case 7:
+                            var payLoanTargetTransferQuery =
+                                from wallet in bank.WalletLists
+                                where wallet.wallet_id == 29
+                                select wallet;
+
+                            foreach (var wallet in payLoanTargetTransferQuery)
+                            {
+                                wallet.wallet_weight += process.amount;
+                            }
+
+                            bank.SubmitChanges();
+
+                            break;
+                    }
+                }
+            }
+
+            var refreshWalletQuery =
+                from wallet in bank.WalletLists
+                select wallet;
+
+            foreach (var wallet in refreshWalletQuery)
+            {
+                wallet.accepts_transactions = true;
+            }
+
+            bank.SubmitChanges();
+
+            Supporting_Files.Variables.currentDate.AddMonths(1);
+
+            SQL.Date newDate = new SQL.Date();
+            newDate.currentDate = Supporting_Files.Variables.currentDate.AddMonths(1);
+            Supporting_Files.Variables.currentDate = newDate.currentDate;
+            bank.Dates.InsertOnSubmit(newDate);
+
+            var employees =
+                from user in bank.UserLists
+                where user.user_type == 3
+                select user;
+
+            var salaries =
+                from salary in bank.SalariesLists
+                where salary.user_type == 3
+                select salary;
+
+            SQL.ProcessList newProcess = new SQL.ProcessList();
+            newProcess.process_type = 2;
+            newProcess.sending_wallet = 29;
+            newProcess.amount = employees.Count() * salaries.FirstOrDefault().salary;
+            newProcess.process_owner = 1;
+            newProcess.process_date = Supporting_Files.Variables.currentDate;
+            bank.ProcessLists.InsertOnSubmit(newProcess);
+
+            bank.SubmitChanges();
+        }
+
+        private void viewAllTransactionsButton_Click(object sender, EventArgs e)
+        {
+            Form form = new View.Manager.ManagerViewAllTransactionsForm();
+            form.Show();
+        }
+
+        private void analyzeForDeadlocksButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void logoutButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            Supporting_Files.Variables.userID = -1;
+            Supporting_Files.Variables.representerID = -1;
+            Form form = new LoginForm();
+            form.Show();
+        }
+
+        private void SetSalariesButton_Click(object sender, EventArgs e)
+        {
+            Form form = new View.Manager.ManagerEmployeeSalariesForm();
+            form.Show();
+        }
+
+        private void ManagerMainForm_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Manager
+{
+    public partial class ManagerSetCreditInterestRatesForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        public ManagerSetCreditInterestRatesForm()
+        {
+            InitializeComponent();
+
+            var initialQuery =
+                from interestRate in bank.InterestRates
+                where interestRate.id == 1
+                select interestRate;
+
+            SQL.InterestRate temp = initialQuery.First();
+            interestRateTextBox.Text = temp.default_interest_rate.ToString();
+            delayedInterestRateTextBox.Text = temp.delayed_interest_rate.ToString();
+        }
+
+        private void updateInterestRateButton_Click(object sender, EventArgs e)
+        {
+            var updateQuery =
+                from interestRate in bank.InterestRates
+                where interestRate.id == 1
+                select interestRate;
+
+            foreach (var interestRate in updateQuery)
+            {
+                interestRate.default_interest_rate = Convert.ToDecimal(interestRateTextBox.Text);
+                interestRate.delayed_interest_rate = Convert.ToDecimal(delayedInterestRateTextBox.Text);
+            }
+
+            bank.SubmitChanges();
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BLM210_ProgramlamaLaboratuvari2_Proje3.View.Manager
+{
+    public partial class ManagerViewAllTransactionsForm : Form
+    {
+        SQL.BankDBDataContext bank = new SQL.BankDBDataContext(Properties.Settings.Default.BankDBConnectionString);
+
+        public ManagerViewAllTransactionsForm()
+        {
+            InitializeComponent();
+        }
+
+        private void ManagerViewAllTransactionsForm_Load(object sender, EventArgs e)
+        {
+            this.processListTableAdapter.Fill(this.bankDBDataSet.ProcessList);
+            int rowCount = 0;
+
+            var processList =
+                from process in bank.ProcessLists
+                select process;
+
+            foreach (var process in processList)
+            {
+                var nameForProcess =
+                    from processType in bank.ProcessTypeLists
+                    where processType.process_type == process.process_type
+                    select processType.process_name;
+
+                processListDataGridView.Rows[rowCount].Cells["process_name"].Value = nameForProcess.FirstOrDefault();
+
+                var targetBalance =
+                    from wallet in bank.WalletLists
+                    where wallet.wallet_id == process.target_wallet
+                    select wallet.wallet_weight;
+
+                processListDataGridView.Rows[rowCount].Cells["target_wallet_weight"].Value = targetBalance.FirstOrDefault();
+
+                var senderBalance =
+                    from wallet in bank.WalletLists
+                    where wallet.wallet_id == process.sending_wallet
+                    select wallet.wallet_weight;
+
+                processListDataGridView.Rows[rowCount].Cells["sending_wallet_weight"].Value = senderBalance.FirstOrDefault();
+                rowCount += 1;
+            }
+        }
+    }
+}

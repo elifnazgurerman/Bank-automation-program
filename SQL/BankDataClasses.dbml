@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="BankDB" Class="BankDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=.\SQLEXPRESS;Initial Catalog=BankDB;Integrated Security=True" SettingsObjectName="BLM210_ProgramlamaLaboratuvari2_Proje3.Properties.Settings" SettingsPropertyName="BankDBConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.ContactInfoList" Member="ContactInfoLists">
+    <Type Name="ContactInfoList">
+      <Column Name="user_id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="adress" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="phone" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="UserList_ContactInfoList" Member="UserList" ThisKey="user_id" OtherKey="user_id" Type="UserList" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CurrencyList" Member="CurrencyLists">
+    <Type Name="CurrencyList">
+      <Column Name="currency_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="currency_name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="currency_shortname" Type="System.String" DbType="NVarChar(3) NOT NULL" CanBeNull="false" />
+      <Column Name="exchange_rate" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Association Name="CurrencyList_WalletList" Member="WalletLists" ThisKey="currency_id" OtherKey="currency_id" Type="WalletList" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CustomerSharingList" Member="CustomerSharingLists">
+    <Type Name="CustomerSharingList">
+      <Column Name="representer_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="customer_id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="UserList_CustomerSharingList" Member="UserList" ThisKey="customer_id" OtherKey="user_id" Type="UserList" IsForeignKey="true" />
+      <Association Name="UserList_CustomerSharingList1" Member="UserList1" ThisKey="representer_id" OtherKey="user_id" Type="UserList" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Date" Member="Dates">
+    <Type Name="Date">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="currentDate" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.InterestRate" Member="InterestRates">
+    <Type Name="InterestRate">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="default_interest_rate" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="delayed_interest_rate" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LoanInstallmentList" Member="LoanInstallmentLists">
+    <Type Name="LoanInstallmentList">
+      <Column Name="installment_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="loan_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="payday" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Association Name="LoanList_LoanInstallmentList" Member="LoanList" ThisKey="loan_id" OtherKey="loan_id" Type="LoanList" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LoanList" Member="LoanLists">
+    <Type Name="LoanList">
+      <Column Name="loan_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="user_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="interest_rate" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="delayed_interest_rate" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="months_to_pay" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="LoanList_LoanInstallmentList" Member="LoanInstallmentLists" ThisKey="loan_id" OtherKey="loan_id" Type="LoanInstallmentList" />
+      <Association Name="UserList_LoanList" Member="UserList" ThisKey="user_id" OtherKey="user_id" Type="UserList" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProcessList" Member="ProcessLists">
+    <Type Name="ProcessList">
+      <Column Name="process_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="process_type" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="sending_wallet" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="target_wallet" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="is_approved" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="is_deadlock" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="process_owner" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="process_date" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Association Name="ProcessTypeList_ProcessList" Member="ProcessTypeList" ThisKey="process_type" OtherKey="process_type" Type="ProcessTypeList" IsForeignKey="true" />
+      <Association Name="UserList_ProcessList" Member="UserList" ThisKey="process_owner" OtherKey="user_id" Type="UserList" IsForeignKey="true" />
+      <Association Name="WalletList_ProcessList" Member="WalletList" ThisKey="sending_wallet" OtherKey="wallet_id" Type="WalletList" IsForeignKey="true" />
+      <Association Name="WalletList_ProcessList1" Member="WalletList1" ThisKey="target_wallet" OtherKey="wallet_id" Type="WalletList" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ProcessTypeList" Member="ProcessTypeLists">
+    <Type Name="ProcessTypeList">
+      <Column Name="process_type" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="process_name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="ProcessTypeList_ProcessList" Member="ProcessLists" ThisKey="process_type" OtherKey="process_type" Type="ProcessList" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SalariesList" Member="SalariesLists">
+    <Type Name="SalariesList">
+      <Column Name="user_type" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="salary" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Association Name="UserTypeList_SalariesList" Member="UserTypeList" ThisKey="user_type" OtherKey="user_type" Type="UserTypeList" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UserList" Member="UserLists">
+    <Type Name="UserList">
+      <Column Name="user_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="username" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="password" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="user_type" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="UserList_ContactInfoList" Member="ContactInfoList" ThisKey="user_id" OtherKey="user_id" Type="ContactInfoList" Cardinality="One" />
+      <Association Name="UserList_CustomerSharingList" Member="CustomerSharingList" ThisKey="user_id" OtherKey="customer_id" Type="CustomerSharingList" Cardinality="One" />
+      <Association Name="UserList_CustomerSharingList1" Member="CustomerSharingLists" ThisKey="user_id" OtherKey="representer_id" Type="CustomerSharingList" />
+      <Association Name="UserList_LoanList" Member="LoanLists" ThisKey="user_id" OtherKey="user_id" Type="LoanList" />
+      <Association Name="UserList_ProcessList" Member="ProcessLists" ThisKey="user_id" OtherKey="process_owner" Type="ProcessList" />
+      <Association Name="UserList_WalletList" Member="WalletLists" ThisKey="user_id" OtherKey="user_id" Type="WalletList" />
+      <Association Name="UserTypeList_UserList" Member="UserTypeList" ThisKey="user_type" OtherKey="user_type" Type="UserTypeList" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UserTypeList" Member="UserTypeLists">
+    <Type Name="UserTypeList">
+      <Column Name="user_type" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="user_type_name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="UserTypeList_SalariesList" Member="SalariesList" ThisKey="user_type" OtherKey="user_type" Type="SalariesList" Cardinality="One" />
+      <Association Name="UserTypeList_UserList" Member="UserLists" ThisKey="user_type" OtherKey="user_type" Type="UserList" />
+    </Type>
+  </Table>
+  <Table Name="dbo.WalletList" Member="WalletLists">
+    <Type Name="WalletList">
+      <Column Name="wallet_id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="user_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="currency_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="wallet_weight" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="accepts_transactions" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="is_active" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="WalletList_ProcessList" Member="ProcessLists" ThisKey="wallet_id" OtherKey="sending_wallet" Type="ProcessList" />
+      <Association Name="WalletList_ProcessList1" Member="ProcessLists1" ThisKey="wallet_id" OtherKey="target_wallet" Type="ProcessList" />
+      <Association Name="CurrencyList_WalletList" Member="CurrencyList" ThisKey="currency_id" OtherKey="currency_id" Type="CurrencyList" IsForeignKey="true" />
+      <Association Name="UserList_WalletList" Member="UserList" ThisKey="user_id" OtherKey="user_id" Type="UserList" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>

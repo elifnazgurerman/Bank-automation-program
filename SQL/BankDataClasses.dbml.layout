@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 10.5" name="ProLaBankDataClasses">
+  <DataContextMoniker Name="/BankDBDataContext" />
+  <nestedChildShapes>
+    <classShape Id="6129904e-e28f-47e5-aac1-bbf60317c477" absoluteBounds="4.5, 5.5, 2, 1.3862939453124987">
+      <DataClassMoniker Name="/BankDBDataContext/ContactInfoList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f105bdc0-d264-4fb9-8cff-e4c0c740118f" absoluteBounds="4.515, 5.9600000000000009, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="0267b123-3f0d-4198-a287-baed75e88466" absoluteBounds="0.5, 2, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/BankDBDataContext/CurrencyList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="79fff6de-7d38-41a0-ad75-3a1449323584" absoluteBounds="0.51499999999999968, 2.46, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="548be0fc-eb53-4a41-a5dc-bd2333abab79" absoluteBounds="4, 3, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/BankDBDataContext/CustomerSharingList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="acd10645-dfa4-423e-9809-a706ff9d1e4d" absoluteBounds="4.015, 3.46, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="e30d385e-fd8c-4a9c-9473-97076f8c93f4" absoluteBounds="0.5, 0.5, 2, 1.1939925130208335">
+      <DataClassMoniker Name="/BankDBDataContext/Date" />
+      <nestedChildShapes>
+        <elementListCompartment Id="05a19d8c-8a92-4fac-9ed6-f3808373c1a9" absoluteBounds="0.515, 0.96, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c6b92179-7048-477e-b0dd-a052d8f87a6b" absoluteBounds="2.75, 0.5, 2, 1.3862939453125">
+      <DataClassMoniker Name="/BankDBDataContext/InterestRate" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b3fb6e01-3674-41c8-801e-117686d9f30a" absoluteBounds="2.765, 0.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="831bef45-d88c-45ac-aad5-8c8e589565df" absoluteBounds="3.375, 8.625, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/BankDBDataContext/LoanInstallmentList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6427a0c1-ab5f-476e-9619-6f745de3623f" absoluteBounds="3.3900000000000006, 9.085, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="6740afc2-cc1e-482c-90c7-53c6b4337e9b" absoluteBounds="0.5, 8.25, 2, 1.9631982421874987">
+      <DataClassMoniker Name="/BankDBDataContext/LoanList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="a6288e3f-6d5b-4c90-9a40-7aa50b551609" absoluteBounds="0.51499999999999968, 8.71, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="10a20ead-d0ff-47d0-a4b7-cf08cd8d81d9" absoluteBounds="6.125, 7.75, 2, 2.5401025390624996">
+      <DataClassMoniker Name="/BankDBDataContext/ProcessList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c468d49a-0864-4260-bee6-9f1a76385fdf" absoluteBounds="6.1400000000000006, 8.21, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="cee1c2b1-38e7-4493-9399-527da410f4ba" absoluteBounds="5.125, 0.5, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/BankDBDataContext/ProcessTypeList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5384e1d6-1004-4dfc-aadc-1a73cfa7cbfe" absoluteBounds="5.1400000000000006, 0.96, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="b0fe46af-afe4-4c5e-b991-1e64746beeb5" absoluteBounds="0.5, 3.75, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/BankDBDataContext/SalariesList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="cd7b237a-487d-4575-ac15-6f21739123a4" absoluteBounds="0.51500000000000012, 4.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="95afc786-0d99-433e-8bbc-1f1341d289b3" absoluteBounds="0.5, 6.5, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/BankDBDataContext/UserList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="7eb6b5b2-0381-46ba-b083-0f533cd23e4f" absoluteBounds="0.51500000000000012, 6.9600000000000009, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="6dcb9a12-88f9-45c4-abb4-fad66387c04b" absoluteBounds="0.5, 5.125, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/BankDBDataContext/UserTypeList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6cd25e2a-a468-4a71-9ac4-9eaf073d0d6d" absoluteBounds="0.515, 5.5850000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="8fa200b5-b97c-41ed-b8f9-c255fee3bfc8" absoluteBounds="6.375, 3, 2, 1.9631982421874996">
+      <DataClassMoniker Name="/BankDBDataContext/WalletList" />
+      <nestedChildShapes>
+        <elementListCompartment Id="cc7e7ba5-0911-4dd5-9378-733ed1ab83b7" absoluteBounds="6.3900000000000006, 3.46, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.5 : 9.08395080805543); (2.875 : 9.08395080805543); (2.875 : 9.64962104253726); (3.375 : 9.64962104253726)]" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/LoanList/LoanList_LoanInstallmentList" />
+      <nodes>
+        <classShapeMoniker Id="6740afc2-cc1e-482c-90c7-53c6b4337e9b" />
+        <classShapeMoniker Id="831bef45-d88c-45ac-aad5-8c8e589565df" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(7.125 : 1.2849934229372); (9.22994168009609 : 1.2849934229372); (9.22994168009609 : 8.75428620796585); (8.95833333333333 : 8.75428620796585 : JumpStart); (8.66666666666667 : 8.75428620796585 : JumpEnd); (8.125 : 8.75428620796585)]" manuallyRouted="true" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/ProcessTypeList/ProcessTypeList_ProcessList" />
+      <nodes>
+        <classShapeMoniker Id="cee1c2b1-38e7-4493-9399-527da410f4ba" />
+        <classShapeMoniker Id="10a20ead-d0ff-47d0-a4b7-cf08cd8d81d9" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 7.29222290352986); (3.38801245732854 : 7.29222290352986 : JumpStart); (3.5546791239952 : 7.29222290352986 : JumpEnd); (6.875 : 7.29222290352986); (6.875 : 6.31278289782856); (6.5 : 6.31278289782856)]" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/UserList/UserList_ContactInfoList" />
+      <nodes>
+        <classShapeMoniker Id="95afc786-0d99-433e-8bbc-1f1341d289b3" />
+        <classShapeMoniker Id="6129904e-e28f-47e5-aac1-bbf60317c477" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 7.27835892839621); (2.86227640416473 : 7.27835892839621); (2.86227640416473 : 4.01743542502259); (3.0519975918966 : 4.01743542502259 : JumpStart); (3.21866425856327 : 4.01743542502259 : JumpEnd); (4 : 4.01743542502259)]" manuallyRouted="true" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/UserList/UserList_CustomerSharingList" />
+      <nodes>
+        <classShapeMoniker Id="95afc786-0d99-433e-8bbc-1f1341d289b3" />
+        <classShapeMoniker Id="548be0fc-eb53-4a41-a5dc-bd2333abab79" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 7.28813144633583); (3.13533092522994 : 7.28813144633583); (3.13533092522994 : 3.8141249770019); (4 : 3.8141249770019)]" manuallyRouted="true" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/UserList/UserList_CustomerSharingList1" />
+      <nodes>
+        <classShapeMoniker Id="95afc786-0d99-433e-8bbc-1f1341d289b3" />
+        <classShapeMoniker Id="548be0fc-eb53-4a41-a5dc-bd2333abab79" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 7.28842307376979); (3.03307015495375 : 7.28842307376979); (3.03307015495375 : 9.22342349124787); (2.95833333333333 : 9.22342349124787 : JumpStart); (2.79166666666667 : 9.22342349124787 : JumpEnd); (2.5 : 9.22342349124787)]" manuallyRouted="true" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/UserList/UserList_LoanList" />
+      <nodes>
+        <classShapeMoniker Id="95afc786-0d99-433e-8bbc-1f1341d289b3" />
+        <classShapeMoniker Id="6740afc2-cc1e-482c-90c7-53c6b4337e9b" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 7.29837309127616); (3.38801245732854 : 7.29837309127616 : JumpStart); (3.5546791239952 : 7.29837309127616 : JumpEnd); (5.75 : 7.29837309127616); (5.75 : 9.93373697516822); (6.125 : 9.93373697516822)]" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/UserList/UserList_ProcessList" />
+      <nodes>
+        <classShapeMoniker Id="95afc786-0d99-433e-8bbc-1f1341d289b3" />
+        <classShapeMoniker Id="10a20ead-d0ff-47d0-a4b7-cf08cd8d81d9" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(0.5 : 5.94341838609732); (0.125 : 5.94341838609732); (0.125 : 4.58784745940875); (0.5 : 4.58784745940875)]" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/UserTypeList/UserTypeList_SalariesList" />
+      <nodes>
+        <classShapeMoniker Id="6dcb9a12-88f9-45c4-abb4-fad66387c04b" />
+        <classShapeMoniker Id="b0fe46af-afe4-4c5e-b991-1e64746beeb5" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 5.95544519012897); (2.7789430708314 : 5.95544519012897 : JumpStart); (2.94560973749806 : 5.95544519012897 : JumpEnd); (3.0519975918966 : 5.95544519012897 : JumpStart); (3.21866425856327 : 5.95544519012897 : JumpEnd); (3.47134579066187 : 5.95544519012897); (3.47134579066187 : 7.90565705884237); (3.11640348828708 : 7.90565705884237 : JumpStart); (2.94973682162041 : 7.90565705884237 : JumpEnd); (2.5 : 7.90565705884237)]" manuallyRouted="true" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/UserTypeList/UserTypeList_UserList" />
+      <nodes>
+        <classShapeMoniker Id="6dcb9a12-88f9-45c4-abb4-fad66387c04b" />
+        <classShapeMoniker Id="95afc786-0d99-433e-8bbc-1f1341d289b3" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.375 : 3.83220283121109); (8.54166666666667 : 3.83220283121109 : JumpStart); (8.70833333333333 : 3.83220283121109 : JumpEnd); (8.75 : 3.83220283121109); (8.75 : 9.14688677954371); (8.125 : 9.14688677954371)]" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/WalletList/WalletList_ProcessList" />
+      <nodes>
+        <classShapeMoniker Id="8fa200b5-b97c-41ed-b8f9-c255fee3bfc8" />
+        <classShapeMoniker Id="10a20ead-d0ff-47d0-a4b7-cf08cd8d81d9" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.375 : 3.82992545410298); (8.54166666666667 : 3.82992545410298 : JumpStart); (8.70833333333333 : 3.82992545410298 : JumpEnd); (8.875 : 3.82992545410298); (8.875 : 8.95713812241174); (8.83333333333333 : 8.95713812241174 : JumpStart); (8.66666666666667 : 8.95713812241174 : JumpEnd); (8.125 : 8.95713812241174)]" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/WalletList/WalletList_ProcessList1" />
+      <nodes>
+        <classShapeMoniker Id="8fa200b5-b97c-41ed-b8f9-c255fee3bfc8" />
+        <classShapeMoniker Id="10a20ead-d0ff-47d0-a4b7-cf08cd8d81d9" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 2.7973931055362); (8.625 : 2.7973931055362); (8.625 : 4.20080186930929); (8.375 : 4.20080186930929)]" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/CurrencyList/CurrencyList_WalletList" />
+      <nodes>
+        <classShapeMoniker Id="0267b123-3f0d-4198-a287-baed75e88466" />
+        <classShapeMoniker Id="8fa200b5-b97c-41ed-b8f9-c255fee3bfc8" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 7.28439273998515); (3.38801245732854 : 7.28439273998514 : JumpStart); (3.5546791239952 : 7.28439273998515 : JumpEnd); (3.872 : 7.28439273998515); (3.872 : 4.75062004359936); (6.183 : 4.75062004359936); (6.183 : 3.99671048534479); (6.375 : 3.99671048534479)]" manuallyRouted="true" fixedFrom="Caller" fixedTo="Caller">
+      <AssociationMoniker Name="/BankDBDataContext/UserList/UserList_WalletList" />
+      <nodes>
+        <classShapeMoniker Id="95afc786-0d99-433e-8bbc-1f1341d289b3" />
+        <classShapeMoniker Id="8fa200b5-b97c-41ed-b8f9-c255fee3bfc8" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>
